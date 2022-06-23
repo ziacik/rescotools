@@ -1,0 +1,9 @@
+{
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"editor.renderWhitespace": "boundary",
+	"typescript.preferences.importModuleSpecifier": "project-relative",
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	}
+}
