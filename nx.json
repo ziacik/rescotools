@@ -28,5 +28,6 @@
 	"workspaceLayout": {
 		"appsDir": "packages",
 		"libsDir": "packages"
-	}
+	},
+	"defaultProject": "rescoenv"
 }
