@@ -1,0 +1,52 @@
+{
+	"$schema": "../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/datagen/src",
+	"projectType": "application",
+	"targets": {
+		"build": {
+			"executor": "@nrwl/node:webpack",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/packages/datagen",
+				"main": "packages/datagen/src/main.ts",
+				"tsConfig": "packages/datagen/tsconfig.app.json",
+				"assets": ["packages/datagen/src/assets"]
+			},
+			"configurations": {
+				"production": {
+					"optimization": true,
+					"extractLicenses": true,
+					"inspect": false,
+					"fileReplacements": [
+						{
+							"replace": "packages/datagen/src/environments/environment.ts",
+							"with": "packages/datagen/src/environments/environment.prod.ts"
+						}
+					]
+				}
+			}
+		},
+		"serve": {
+			"executor": "@nrwl/node:node",
+			"options": {
+				"buildTarget": "datagen:build"
+			}
+		},
+		"lint": {
+			"executor": "@nrwl/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/datagen/**/*.ts"]
+			}
+		},
+		"test": {
+			"executor": "@nrwl/jest:jest",
+			"outputs": ["coverage/packages/datagen"],
+			"options": {
+				"jestConfig": "packages/datagen/jest.config.ts",
+				"passWithNoTests": true
+			}
+		}
+	},
+	"tags": []
+}
