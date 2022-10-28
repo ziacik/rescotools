@@ -4,13 +4,15 @@
 	"projectType": "application",
 	"targets": {
 		"build": {
-			"executor": "@nrwl/node:webpack",
+			"executor": "@nrwl/webpack:webpack",
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"outputPath": "dist/packages/rescoenv",
 				"main": "packages/rescoenv/src/main.ts",
 				"tsConfig": "packages/rescoenv/tsconfig.app.json",
-				"assets": ["packages/rescoenv/src/assets"]
+				"assets": ["packages/rescoenv/src/assets"],
+				"target": "node",
+				"compiler": "tsc"
 			},
 			"configurations": {
 				"production": {
@@ -41,7 +43,7 @@
 		},
 		"test": {
 			"executor": "@nrwl/jest:jest",
-			"outputs": ["coverage/packages/rescoenv"],
+			"outputs": ["{workspaceRoot}/coverage/packages/rescoenv"],
 			"options": {
 				"jestConfig": "packages/rescoenv/jest.config.ts",
 				"passWithNoTests": true

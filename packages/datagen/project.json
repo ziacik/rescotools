@@ -4,13 +4,15 @@
 	"projectType": "application",
 	"targets": {
 		"build": {
-			"executor": "@nrwl/node:webpack",
+			"executor": "@nrwl/webpack:webpack",
 			"outputs": ["{options.outputPath}"],
 			"options": {
 				"outputPath": "dist/packages/datagen",
 				"main": "packages/datagen/src/main.ts",
 				"tsConfig": "packages/datagen/tsconfig.app.json",
-				"assets": ["packages/datagen/src/assets"]
+				"assets": ["packages/datagen/src/assets"],
+				"target": "node",
+				"compiler": "tsc"
 			},
 			"configurations": {
 				"production": {
@@ -41,7 +43,7 @@
 		},
 		"test": {
 			"executor": "@nrwl/jest:jest",
-			"outputs": ["coverage/packages/datagen"],
+			"outputs": ["{workspaceRoot}/coverage/packages/datagen"],
 			"options": {
 				"jestConfig": "packages/datagen/jest.config.ts",
 				"passWithNoTests": true
