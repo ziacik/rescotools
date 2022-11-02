@@ -4,6 +4,7 @@
 	"projects": {
 		"datagen": "packages/datagen",
 		"flappsex": "packages/flappsex",
+		"frapps": "packages/frapps",
 		"frappslib": "packages/frappslib",
 		"rescoenv": "packages/rescoenv"
 	}

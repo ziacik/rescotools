@@ -1,12 +1,39 @@
-use reqwest::Client;
+mod credentials;
+mod presence;
+
+use reqwest::{redirect::Policy, Client};
 
 pub async fn login(user: &str, pass: &str) -> String {
-	let client = Client::new();
+	let client = Client::builder()
+		.redirect(Policy::default())
+		.cookie_store(true)
+		.build()
+		.unwrap();
+
+	let params = [("instance", "resco"), ("login", user), ("password", pass)];
 	let r = client
-		.get("https://resco.flapps.com/login.jsp")
+		.post("https://resco.flapps.com/login_check")
+		.form(&params)
+		// .header("Content-Type", "application/x-www-form-urlencoded")
+		// .body("instance=resco&login=frantisek.ziacik&password=kvakykvak100?")
+		.send()
+		.await;
+
+	let r = client
+		.get("https://resco.flapps.com/rest/dashboard/absences")
+		// .header("Content-Type", "application/x-www-form-urlencoded")
+		// .body("instance=resco&login=frantisek.ziacik&password=kvakykvak100?")
 		.send()
 		.await;
 	r.unwrap().text().await.unwrap()
+
+	// r.unwrap()
+	// 	.headers()
+	// 	.get("location")
+	// 	.unwrap()
+	// 	.to_str()
+	// 	.unwrap()
+	// 	.to_string()
 }
 
 pub async fn get_login_cookie() -> String {
