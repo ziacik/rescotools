@@ -1,43 +1,48 @@
-use chrono::NaiveDate;
 use futures::{future::FutureExt, TryFutureExt};
-use reqwest::Client;
+use reqwest::{Client, Error, Response};
 use serde::Deserialize;
 
 #[derive(Debug, PartialEq, Deserialize)]
 pub struct Presence {
-	name: String,
-	typ: String,
+	fullName: String,
+	r#type: String,
 	until: String,
+}
+
+async fn kvak() {
+	let future = async { 1 };
+	let new_future = future.map(|x| x + 3);
+	assert_eq!(new_future.await, 4);
+}
+
+fn parse_response(r: Result<Response, Error>) -> Result<Vec<Presence>, Error> {
+	r.map(|response| response.json::<Vec<Presence>>())
 }
 
 pub async fn get_presence(logged_in_client: &Client) -> Vec<Presence> {
 	#[cfg(not(test))]
-	let host = "http://example.com";
+	let base = "http://example.com";
 
 	// The host to be used in test compilation
 	#[cfg(test)]
-	let host = &mockito::server_url();
+	let base = &mockito::server_url();
+	let url = format!("{}/rest/dashboard/absences", base);
 
-	let x = logged_in_client
-		.get(format!("{}/rest/dashboard/absences", host))
-		.send()
-		.await
-		.expect("asdfsdaf")
-		.text()
-		.await;
+	let r = logged_in_client.get(url).send();
 
-	dbg!(x);
-
-	let result: Vec<Presence> = logged_in_client
-		.get(format!("{}/rest/dashboard/absences", host))
-		.send()
-		.map(|resp| {
-			resp.unwrap()
-				.json::<Vec<Presence>>()
-				.unwrap_or_else(|_| Vec::new())
+	let result: Vec<Presence> = r
+		.map(|response_or_error| response_or_error.unwrap().json::<Vec<Presence>>())
+		.then(|it| {
+			let x = it.unwrap_or_else(|_| Vec::new::Presence());
+			Presence {
+				fullName: it.unwrap_or_else(|_| "xxx").fullName,
+				r#type: it.r#type,
+				until: it.until,
+			}
 		})
 		.await
-		.await;
+		.await
+		.unwrap();
 
 	result
 }
@@ -56,9 +61,7 @@ mod tests {
 
 	#[test]
 	fn mock_server() {
-		let host = &mockito::server_url();
-
-		let _m = mock("GET", format!("{}/rest/dashboard/absences", host).as_str())
+		let _m = mock("GET", "/rest/dashboard/absences")
 			.with_status(200)
 			.with_header("content-type", "application/json")
 			.with_body(
@@ -81,19 +84,18 @@ mod tests {
 			.create();
 
 		let expected1 = Presence {
-			name: String::from("Ján Mrkva"),
-			typ: String::from("Dovolenka"),
+			fullName: String::from("Ján Mrkva"),
+			r#type: String::from("Dovolenka"),
 			until: String::from("2022-11-01T00:00:00.000Z"), //NaiveDate::from_ymd(2022, 11, 1),
 		};
 
 		let expected2 = Presence {
-			name: String::from("Filoména Krkvavá"),
-			typ: String::from("Práca z domu"),
+			fullName: String::from("Filoména Krkvavá"),
+			r#type: String::from("Práca z domu"),
 			until: String::from("2022-12-05T00:00:00.000Z"), // NaiveDate::from_ymd(2022, 12, 5),
 		};
 
 		let client = Client::new();
-
 		let actual = aw!(get_presence(&client));
 
 		assert_eq!(&actual, &[expected1, expected2]);
