@@ -29,22 +29,25 @@ pub async fn get_presence(logged_in_client: &Client) -> Vec<Presence> {
 	let url = format!("{}/rest/dashboard/absences", base);
 
 	let r = logged_in_client.get(url).send();
+	let m = r.then(|it| async parse_response { it });
 
-	let result: Vec<Presence> = r
-		.map(|response_or_error| response_or_error.unwrap().json::<Vec<Presence>>())
-		.then(|it| {
-			let x = it.unwrap_or_else(|_| Vec::new::Presence());
-			Presence {
-				fullName: it.unwrap_or_else(|_| "xxx").fullName,
-				r#type: it.r#type,
-				until: it.until,
-			}
-		})
-		.await
-		.await
-		.unwrap();
+	// let result: Vec<Presence> = r
+	// 	.map(|response_or_error| response_or_error.unwrap().json::<Vec<Presence>>())
+	// 	.then(|it| {
+	// 		let x = it.unwrap_or_else(|_| Vec::new::Presence());
+	// 		Presence {
+	// 			fullName: it.unwrap_or_else(|_| "xxx").fullName,
+	// 			r#type: it.r#type,
+	// 			until: it.until,
+	// 		}
+	// 	})
+	// 	.await
+	// 	.await
+	// 	.unwrap();
 
-	result
+	// result
+
+	m
 }
 
 #[cfg(test)]
