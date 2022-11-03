@@ -1,5 +1,6 @@
+pub mod absences;
 mod credentials;
-mod presence;
+pub mod error;
 
 use reqwest::{redirect::Policy, Client};
 
