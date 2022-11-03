@@ -1,4 +1,4 @@
-use futures::{future::FutureExt, TryFutureExt};
+use futures::{future::FutureExt, Future, TryFutureExt};
 use reqwest::{Client, Error, Response};
 use serde::Deserialize;
 
@@ -15,8 +15,8 @@ async fn kvak() {
 	assert_eq!(new_future.await, 4);
 }
 
-fn parse_response(r: Result<Response, Error>) -> Result<Vec<Presence>, Error> {
-	r.map(|response| response.json::<Vec<Presence>>())
+async fn parse_response(response: Response) -> impl Future<Output = Result<Vec<Presence>, Error>> {
+	response.json::<Vec<Presence>>()
 }
 
 pub async fn get_presence(logged_in_client: &Client) -> Vec<Presence> {
@@ -29,7 +29,7 @@ pub async fn get_presence(logged_in_client: &Client) -> Vec<Presence> {
 	let url = format!("{}/rest/dashboard/absences", base);
 
 	let r = logged_in_client.get(url).send();
-	let m = r.then(|it| async parse_response { it });
+	let m = r.map(|it| parse_response(it.unwrap()));
 
 	// let result: Vec<Presence> = r
 	// 	.map(|response_or_error| response_or_error.unwrap().json::<Vec<Presence>>())
@@ -99,7 +99,7 @@ mod tests {
 		};
 
 		let client = Client::new();
-		let actual = aw!(get_presence(&client));
+		let actual = block_on(get_presence(&client));
 
 		assert_eq!(&actual, &[expected1, expected2]);
 	}
