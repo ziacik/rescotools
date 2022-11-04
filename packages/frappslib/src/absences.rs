@@ -21,7 +21,7 @@ pub struct Absence {
 
 pub async fn get_absences(logged_in_client: &Client) -> Result<Vec<Absence>, GenericError> {
 	#[cfg(not(test))]
-	let base = "https://resco.flapps.com";
+	let base = crate::config::base_url();
 
 	#[cfg(test)]
 	let base = &mockito::server_url();
