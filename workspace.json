@@ -3,6 +3,8 @@
 	"version": 2,
 	"projects": {
 		"datagen": "packages/datagen",
+		"frapps": "packages/frapps",
+		"frappslib": "packages/frappslib",
 		"rescoenv": "packages/rescoenv"
 	}
 }
