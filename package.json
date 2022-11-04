@@ -13,6 +13,7 @@
 		"@nrwl/node": "15.0.4",
 		"@nrwl/nx-cloud": "15.0.0",
 		"@nrwl/workspace": "15.0.4",
+		"@nxrs/cargo": "^0.3.3",
 		"@types/jest": "28.1.1",
 		"@types/node": "18.7.1",
 		"@typescript-eslint/eslint-plugin": "5.41.0",

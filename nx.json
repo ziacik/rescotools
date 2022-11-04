@@ -40,5 +40,6 @@
 			"!{projectRoot}/jest.config.[jt]s",
 			"!{projectRoot}/.eslintrc.json"
 		]
-	}
+	},
+	"plugins": ["@nxrs/cargo"]
 }
